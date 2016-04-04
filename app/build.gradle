@@ -26,5 +26,8 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile files('libs/jsoup-1.8.3.jar')
     compile files('libs/gson-2.2.jar')
+<<<<<<< HEAD
     compile files('libs/universal-image-loader-1.9.5-javadoc.jar')
+=======
+>>>>>>> f7c65e9... Initial commit
 }
