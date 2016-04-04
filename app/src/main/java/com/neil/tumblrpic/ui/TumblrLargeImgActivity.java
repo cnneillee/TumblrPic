@@ -13,6 +13,8 @@ import android.widget.ImageView;
 
 import com.neil.tumblrpic.R;
 import com.neil.tumblrpic.util.ImageLoader;
+import com.neil.tumblrpic.util.ImageLoaderFactory;
+import com.neil.tumblrpic.util.ImageLoaderWrapper;
 
 
 /**
@@ -35,7 +37,11 @@ public class TumblrLargeImgActivity extends AppCompatActivity {
         if (getIntent() != null) {
             strImg = getIntent().getStringExtra("IMG_URL");
             if (strImg != null) {
-                ImageLoader.loadImage(ivPhoto, strImg);
+                ImageLoaderWrapper.DisplayOption displayOption = new ImageLoaderWrapper.DisplayOption();
+                displayOption.loadingResId = R.drawable.ic_v2ex;
+                displayOption.loadErrorResId = R.mipmap.img_error;
+
+                ImageLoaderFactory.getLoader().displayImage(ivPhoto, strImg, displayOption);
             }
         }
     }

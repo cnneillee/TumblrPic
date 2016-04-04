@@ -16,60 +16,25 @@ import com.neil.tumblrpic.Constant;
 import com.neil.tumblrpic.R;
 import com.neil.tumblrpic.bean.MainImgBean;
 import com.neil.tumblrpic.ui.TumblrLargeImgActivity;
-import com.neil.tumblrpic.util.ImageLoader;
+import com.neil.tumblrpic.util.ImageLoaderFactory;
+import com.neil.tumblrpic.util.ImageLoaderWrapper;
+import com.neil.tumblrpic.util.UniversalAndroidImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 /**
  * Created by Neil on 2016/3/22.
  */
 public class AdvTumblrImgAdapter extends BaseAdapter {
-    //使用缓存机制
-    /**
-     * 记录所有正在下载或等待下载的任务。
-     */
-    private Set<BitmapWorkerTask> taskCollection;
-    /**
-     * 图片缓存技术的核心类，用于缓存所有下载好的图片，在程序内存达到设定值时会将最少最近使用的图片移除掉。
-     */
-    private LruCache<String, Bitmap> mMemoryCache;
-
-    /**
-     * 第一张可见图片的下标
-     */
-    private int mFirstVisibleItem;
-
-    /**
-     * 一屏有多少张图片可见
-     */
-    private int mVisibleItemCount;
-    /**
-     * 记录是否刚打开程序，用于解决进入程序不滚动屏幕，不会下载图片的问题。
-     */
-    private boolean isFirstEnter = true;
-
-
     private List<MainImgBean> mDatas;
     private Context mContext;
 
     public AdvTumblrImgAdapter(List<MainImgBean> datas, Context context) {
         mDatas = datas;
         mContext = context;
-        taskCollection = new HashSet<BitmapWorkerTask>();
-
-        // 获取应用程序最大可用内存
-        int maxMemory = (int) Runtime.getRuntime().maxMemory();
-        int cacheSize = maxMemory / 8;
-        // 设置图片缓存大小为程序最大可用内存的1/8
-        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
-            @Override
-            protected int sizeOf(String key, Bitmap bitmap) {
-                return bitmap.getByteCount();
-            }
-        };
     }
 
     public List<MainImgBean> getmDatas() {
@@ -112,46 +77,25 @@ public class AdvTumblrImgAdapter extends BaseAdapter {
             }
         });
         vh.tvDescription.setText(mDatas.get(position).getDesc());
-        // 给ImageView设置一个Tag，保证异步加载图片时不会乱序
-        vh.ivPhoto.setTag(mDatas.get(position).getSrc());
-        setImageView(vh.ivPhoto, mDatas.get(position).getSrc());
+
+//        final ViewHolder finalVh = vh;
+//        ImageLoader.getInstance().loadImage(mDatas.get(position).getSrc(), new SimpleImageLoadingListener() {
+//            @Override
+//            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+//                super.onLoadingComplete(imageUri, view, loadedImage);
+//                finalVh.ivPhoto.setImageBitmap(loadedImage);
+//            }
+//        });
+
+        UniversalAndroidImageLoader.init(mContext);
+
+        ImageLoaderWrapper.DisplayOption displayOption = new ImageLoaderWrapper.DisplayOption();
+        displayOption.loadingResId = R.mipmap.img_default;
+        displayOption.loadErrorResId = R.mipmap.img_error;
+
+        ImageLoaderFactory.getLoader().displayImage(vh.ivPhoto, mDatas.get(position).getSrc(), displayOption);
         return convertView;
     }
-
-    private void setImageView(ImageView ivPhoto, String src) {
-        Bitmap bitmap = mMemoryCache.get(src);
-        if (bitmap != null) {
-            ivPhoto.setImageBitmap(bitmap);
-        } else {
-            ivPhoto.setImageBitmap(BitmapFactory.
-                    decodeResource(mContext.getResources(), R.drawable.ic_v2ex));
-            // TODO: 2016/4/4  待处理
-            ImageLoader.loadImage(ivPhoto, src, mMemoryCache);
-        }
-    }
-
-    /**
-     * 将一张图片存储到LruCache中。
-     *
-     * @param key    LruCache的键，这里传入图片的URL地址。
-     * @param bitmap LruCache的键，这里传入从网络上下载的Bitmap对象。
-     */
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        if (getBitmapFromMemoryCache(key) == null) {
-            mMemoryCache.put(key, bitmap);
-        }
-    }
-
-    /**
-     * 从LruCache中获取一张图片，如果不存在就返回null。
-     *
-     * @param key LruCache的键，这里传入图片的URL地址。
-     * @return 对应传入键的Bitmap对象，或者null。
-     */
-    public Bitmap getBitmapFromMemoryCache(String key) {
-        return mMemoryCache.get(key);
-    }
-
 
     class ViewHolder {
         ImageView ivPhoto;

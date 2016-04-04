@@ -16,11 +16,6 @@ public class Constant {
      * blog内实现翻页的连接部分
      */
     public static final String PAGE = "/page/";
-<<<<<<< HEAD
-
-
     //用于传参
-    public static final String PASS_ON_IMG_URL="IMG_URL";
-=======
->>>>>>> f7c65e9... Initial commit
+    public static final String PASS_ON_IMG_URL = "IMG_URL";
 }

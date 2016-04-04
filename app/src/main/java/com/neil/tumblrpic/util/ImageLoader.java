@@ -3,10 +3,9 @@ package com.neil.tumblrpic.util;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-<<<<<<< HEAD
+
 import android.util.LruCache;
-=======
->>>>>>> f7c65e9... Initial commit
+
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -18,7 +17,6 @@ import java.util.Calendar;
  */
 public class ImageLoader {
 
-<<<<<<< HEAD
     public static void loadImage(final ImageView iv, final String imgUrl,
                                  final LruCache<String, Bitmap> mMemoryCache) {
         new AsyncTask<Void, Void, Void>() {
@@ -46,9 +44,6 @@ public class ImageLoader {
         }.execute();
     }
 
-
-=======
->>>>>>> f7c65e9... Initial commit
     public static void loadImage(final ImageView iv, final String imgUrl) {
         new AsyncTask<Void, Void, Void>() {
             Bitmap bm = null;
